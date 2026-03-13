@@ -51,9 +51,13 @@ public class MapLibreMap(
 
   // region Style
 
-  // TODO: getStyle()
+  public external fun addSource(source: org.maplibre.kmp.native.sources.Source)
 
-  // TODO: setStyle(style)
+  public external fun removeSource(source: org.maplibre.kmp.native.sources.Source)
+
+  public external fun addLayer(layer: org.maplibre.kmp.native.layers.Layer)
+
+  public external fun removeLayer(layer: org.maplibre.kmp.native.layers.Layer)
 
   public external fun loadStyleURL(url: String)
 

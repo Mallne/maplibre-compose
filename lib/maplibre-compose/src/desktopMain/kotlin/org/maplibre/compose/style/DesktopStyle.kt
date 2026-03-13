@@ -25,25 +25,39 @@ internal class DesktopStyle(internal val impl: MapLibreMap) : Style {
     return emptyList()
   }
 
-  override fun addSource(source: Source) {}
+  override fun addSource(source: Source) {
+    impl.addSource(source.impl)
+  }
 
-  override fun removeSource(source: Source) {}
+  override fun removeSource(source: Source) {
+    impl.removeSource(source.impl)
+  }
 
   override fun getLayer(id: String): Layer? {
-    return null
+    return null // TODO
   }
 
   override fun getLayers(): List<Layer> {
-    return emptyList()
+    return emptyList() // TODO
   }
 
-  override fun addLayer(layer: Layer) {}
+  override fun addLayer(layer: Layer) {
+    impl.addLayer(layer.impl)
+  }
 
-  override fun addLayerAbove(id: String, layer: Layer) {}
+  override fun addLayerAbove(id: String, layer: Layer) {
+    impl.addLayer(layer.impl) // TODO: support above
+  }
 
-  override fun addLayerBelow(id: String, layer: Layer) {}
+  override fun addLayerBelow(id: String, layer: Layer) {
+    impl.addLayer(layer.impl) // TODO: support below
+  }
 
-  override fun addLayerAt(index: Int, layer: Layer) {}
+  override fun addLayerAt(index: Int, layer: Layer) {
+    impl.addLayer(layer.impl) // TODO: support at index
+  }
 
-  override fun removeLayer(layer: Layer) {}
+  override fun removeLayer(layer: Layer) {
+    impl.removeLayer(layer.impl)
+  }
 }

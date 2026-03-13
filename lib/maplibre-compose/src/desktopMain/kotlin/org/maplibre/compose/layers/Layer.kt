@@ -1,27 +1,29 @@
 package org.maplibre.compose.layers
 
+import org.maplibre.kmp.native.layers.Layer as NativeLayer
+
 internal actual sealed class Layer {
-  abstract val impl: Nothing
+  abstract val impl: NativeLayer
 
   actual val id: String
-    get() = TODO()
+    get() = impl.id
 
   actual var minZoom: Float
-    get() = TODO()
+    get() = 0f // TODO
     set(value) {
-      TODO()
+      // TODO
     }
 
   actual var maxZoom: Float
-    get() = TODO()
+    get() = 24f // TODO
     set(value) {
-      TODO()
+      // TODO
     }
 
   actual var visible: Boolean
-    get() = TODO()
+    get() = true // TODO
     set(value) {
-      TODO()
+      // TODO
     }
 
   override fun toString() = "${this::class.simpleName}(id=\"$id\")"

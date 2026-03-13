@@ -4,12 +4,22 @@
 #include <mbgl/storage/file_source_manager.hpp>
 #include <mbgl/storage/resource_options.hpp>
 #include <mbgl/style/style.hpp>
+#include <mbgl/style/sources/raster_source.hpp>
+#include <mbgl/style/sources/geojson_source.hpp>
+#include <mbgl/style/layers/raster_layer.hpp>
+#include <mbgl/style/layers/circle_layer.hpp>
 #include <mbgl/util/client_options.hpp>
 
 #include <jni.h>
 #include <smjni/java_exception.h>
 
 #include <MapLibreMap_class.h>
+#include <Source_class.h>
+#include <RasterSource_class.h>
+#include <GeoJsonSource_class.h>
+#include <Layer_class.h>
+#include <RasterLayer_class.h>
+#include <CircleLayer_class.h>
 
 #include "conversions.hpp"
 #include "java_classes.hpp"
@@ -72,6 +82,60 @@ void JNICALL
 MapLibreMap_class::loadStyleJSON(JNIEnv* env, jMapLibreMap map, jstring json) {
   withMapWrapper(env, map, [env, json](auto wrapper) {
     wrapper->map->getStyle().loadJSON(smjni::java_string_to_cpp(env, json));
+  });
+}
+
+void JNICALL MapLibreMap_class::addSource(JNIEnv* env, jMapLibreMap map, jSource source) {
+  withMapWrapper(env, map, [env, source](auto wrapper) {
+    auto id = smjni::java_string_to_cpp(env, java_classes::get<Source_class>().getId(env, source));
+    
+    if (env->IsInstanceOf(source, java_classes::get<RasterSource_class>())) {
+      auto jUri = java_classes::get<RasterSource_class>().getUri(env, source);
+      auto tileSize = java_classes::get<RasterSource_class>().getTileSize(env, source);
+      
+      if (jUri) {
+        wrapper->map->getStyle().addSource(std::make_unique<mbgl::style::RasterSource>(
+          id, smjni::java_string_to_cpp(env, jUri), static_cast<uint16_t>(tileSize)
+        ));
+      } else {
+        // TODO: handle tiles list
+      }
+    } else if (env->IsInstanceOf(source, java_classes::get<GeoJsonSource_class>())) {
+      auto jJson = java_classes::get<GeoJsonSource_class>().getJson(env, source);
+      auto nativeSource = std::make_unique<mbgl::style::GeoJSONSource>(id);
+      if (jJson) {
+        nativeSource->setGeoJSON(smjni::java_string_to_cpp(env, jJson));
+      }
+      wrapper->map->getStyle().addSource(std::move(nativeSource));
+    }
+  });
+}
+
+void JNICALL MapLibreMap_class::removeSource(JNIEnv* env, jMapLibreMap map, jSource source) {
+  withMapWrapper(env, map, [env, source](auto wrapper) {
+    auto id = smjni::java_string_to_cpp(env, java_classes::get<Source_class>().getId(env, source));
+    wrapper->map->getStyle().removeSource(id);
+  });
+}
+
+void JNICALL MapLibreMap_class::addLayer(JNIEnv* env, jMapLibreMap map, jLayer layer) {
+  withMapWrapper(env, map, [env, layer](auto wrapper) {
+    auto id = smjni::java_string_to_cpp(env, java_classes::get<Layer_class>().getId(env, layer));
+    
+    if (env->IsInstanceOf(layer, java_classes::get<RasterLayer_class>())) {
+      auto sourceId = smjni::java_string_to_cpp(env, java_classes::get<RasterLayer_class>().getSourceId(env, layer));
+      wrapper->map->getStyle().addLayer(std::make_unique<mbgl::style::RasterLayer>(id, sourceId));
+    } else if (env->IsInstanceOf(layer, java_classes::get<CircleLayer_class>())) {
+      auto sourceId = smjni::java_string_to_cpp(env, java_classes::get<CircleLayer_class>().getSourceId(env, layer));
+      wrapper->map->getStyle().addLayer(std::make_unique<mbgl::style::CircleLayer>(id, sourceId));
+    }
+  });
+}
+
+void JNICALL MapLibreMap_class::removeLayer(JNIEnv* env, jMapLibreMap map, jLayer layer) {
+  withMapWrapper(env, map, [env, layer](auto wrapper) {
+    auto id = smjni::java_string_to_cpp(env, java_classes::get<Layer_class>().getId(env, layer));
+    wrapper->map->getStyle().removeLayer(id);
   });
 }
 
