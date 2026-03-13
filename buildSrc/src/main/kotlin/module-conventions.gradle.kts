@@ -9,4 +9,4 @@ jgitver {
   nonQualifierBranches("main")
 }
 
-tasks.withType<AbstractTestTask>().configureEach { failOnNoDiscoveredTests = false }
+// tasks.withType<AbstractTestTask>().configureEach { failOnNoDiscoveredTests = false }

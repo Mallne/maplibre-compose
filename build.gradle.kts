@@ -6,6 +6,10 @@ plugins {
   id("module-conventions")
 }
 
+ext {
+  set("base_tag", "v0.12.1")
+}
+
 mkdocs {
   sourcesDir = "docs"
   strict = true
