@@ -16,75 +16,79 @@ import org.maplibre.compose.sources.Source
 internal actual class LineLayer actual constructor(id: String, source: Source) :
   FeatureLayer(source) {
 
-  override val impl = TODO()
+  override val impl = org.maplibre.kmp.native.layers.LineLayer(id, source.id)
 
-  actual override var sourceLayer: String = TODO()
+  actual override var sourceLayer: String = ""
+    set(value) {
+      field = value
+      setProperty("source-layer", org.maplibre.compose.expressions.ast.StringLiteral.of(value))
+    }
 
   actual override fun setFilter(filter: CompiledExpression<BooleanValue>) {
-    TODO()
+    setFilterInternal(filter)
   }
 
   actual fun setLineCap(cap: CompiledExpression<LineCap>) {
-    TODO()
+    setProperty("line-cap", cap)
   }
 
   actual fun setLineJoin(join: CompiledExpression<LineJoin>) {
-    TODO()
+    setProperty("line-join", join)
   }
 
   actual fun setLineMiterLimit(miterLimit: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("line-miter-limit", miterLimit)
   }
 
   actual fun setLineRoundLimit(roundLimit: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("line-round-limit", roundLimit)
   }
 
   actual fun setLineSortKey(sortKey: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("line-sort-key", sortKey)
   }
 
   actual fun setLineOpacity(opacity: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("line-opacity", opacity)
   }
 
   actual fun setLineColor(color: CompiledExpression<ColorValue>) {
-    TODO()
+    setProperty("line-color", color)
   }
 
   actual fun setLineTranslate(translate: CompiledExpression<DpOffsetValue>) {
-    TODO()
+    setProperty("line-translate", translate)
   }
 
   actual fun setLineTranslateAnchor(translateAnchor: CompiledExpression<TranslateAnchor>) {
-    TODO()
+    setProperty("line-translate-anchor", translateAnchor)
   }
 
   actual fun setLineWidth(width: CompiledExpression<DpValue>) {
-    TODO()
+    setProperty("line-width", width)
   }
 
   actual fun setLineGapWidth(gapWidth: CompiledExpression<DpValue>) {
-    TODO()
+    setProperty("line-gap-width", gapWidth)
   }
 
   actual fun setLineOffset(offset: CompiledExpression<DpValue>) {
-    TODO()
+    setProperty("line-offset", offset)
   }
 
   actual fun setLineBlur(blur: CompiledExpression<DpValue>) {
-    TODO()
+    setProperty("line-blur", blur)
   }
 
   actual fun setLineDasharray(dasharray: CompiledExpression<VectorValue<Number>>) {
-    TODO()
+    setProperty("line-dasharray", dasharray)
   }
 
   actual fun setLinePattern(pattern: CompiledExpression<ImageValue>) {
-    TODO()
+    setProperty("line-pattern", pattern)
   }
 
   actual fun setLineGradient(gradient: CompiledExpression<ColorValue>) {
-    TODO()
+    setProperty("line-gradient", gradient)
   }
 }

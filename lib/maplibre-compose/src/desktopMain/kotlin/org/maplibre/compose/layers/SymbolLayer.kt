@@ -1,278 +1,258 @@
 package org.maplibre.compose.layers
 
 import org.maplibre.compose.expressions.ast.CompiledExpression
-import org.maplibre.compose.expressions.value.BooleanValue
-import org.maplibre.compose.expressions.value.ColorValue
-import org.maplibre.compose.expressions.value.DpOffsetValue
-import org.maplibre.compose.expressions.value.DpPaddingValue
-import org.maplibre.compose.expressions.value.DpValue
-import org.maplibre.compose.expressions.value.FloatOffsetValue
-import org.maplibre.compose.expressions.value.FloatValue
-import org.maplibre.compose.expressions.value.FormattedValue
-import org.maplibre.compose.expressions.value.IconPitchAlignment
-import org.maplibre.compose.expressions.value.IconRotationAlignment
-import org.maplibre.compose.expressions.value.IconTextFit
-import org.maplibre.compose.expressions.value.ImageValue
-import org.maplibre.compose.expressions.value.ListValue
-import org.maplibre.compose.expressions.value.StringValue
-import org.maplibre.compose.expressions.value.SymbolAnchor
-import org.maplibre.compose.expressions.value.SymbolOverlap
-import org.maplibre.compose.expressions.value.SymbolPlacement
-import org.maplibre.compose.expressions.value.SymbolZOrder
-import org.maplibre.compose.expressions.value.TextJustify
-import org.maplibre.compose.expressions.value.TextPitchAlignment
-import org.maplibre.compose.expressions.value.TextRotationAlignment
-import org.maplibre.compose.expressions.value.TextTransform
-import org.maplibre.compose.expressions.value.TextVariableAnchorOffsetValue
-import org.maplibre.compose.expressions.value.TextWritingMode
-import org.maplibre.compose.expressions.value.TranslateAnchor
+import org.maplibre.compose.expressions.value.*
 import org.maplibre.compose.sources.Source
 
 internal actual class SymbolLayer actual constructor(id: String, source: Source) :
   FeatureLayer(source) {
-  override val impl = TODO()
+  override val impl = org.maplibre.kmp.native.layers.SymbolLayer(id, source.id)
 
-  actual override var sourceLayer: String = TODO()
+  actual override var sourceLayer: String = ""
+    set(value) {
+      field = value
+      setProperty("source-layer", org.maplibre.compose.expressions.ast.StringLiteral.of(value))
+    }
 
   actual override fun setFilter(filter: CompiledExpression<BooleanValue>) {
-    TODO()
+    setFilterInternal(filter)
   }
 
   actual fun setSymbolPlacement(placement: CompiledExpression<SymbolPlacement>) {
-    TODO()
+    setProperty("symbol-placement", placement)
   }
 
   actual fun setSymbolSpacing(spacing: CompiledExpression<DpValue>) {
-    TODO()
+    setProperty("symbol-spacing", spacing)
   }
 
   actual fun setSymbolAvoidEdges(avoidEdges: CompiledExpression<BooleanValue>) {
-    TODO()
+    setProperty("symbol-avoid-edges", avoidEdges)
   }
 
   actual fun setSymbolSortKey(sortKey: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("symbol-sort-key", sortKey)
   }
 
   actual fun setSymbolZOrder(zOrder: CompiledExpression<SymbolZOrder>) {
-    TODO()
+    setProperty("symbol-z-order", zOrder)
   }
 
   actual fun setIconAllowOverlap(allowOverlap: CompiledExpression<BooleanValue>) {
-    TODO()
+    setProperty("icon-allow-overlap", allowOverlap)
   }
 
   actual fun setIconOverlap(overlap: CompiledExpression<StringValue>) {
-    TODO()
+    setProperty("icon-overlap", overlap)
   }
 
   actual fun setIconIgnorePlacement(ignorePlacement: CompiledExpression<BooleanValue>) {
-    TODO()
+    setProperty("icon-ignore-placement", ignorePlacement)
   }
 
   actual fun setIconOptional(optional: CompiledExpression<BooleanValue>) {
-    TODO()
+    setProperty("icon-optional", optional)
   }
 
   actual fun setIconRotationAlignment(
     rotationAlignment: CompiledExpression<IconRotationAlignment>
   ) {
-    TODO()
+    setProperty("icon-rotation-alignment", rotationAlignment)
   }
 
   actual fun setIconSize(size: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("icon-size", size)
   }
 
   actual fun setIconTextFit(textFit: CompiledExpression<IconTextFit>) {
-    TODO()
+    setProperty("icon-text-fit", textFit)
   }
 
   actual fun setIconTextFitPadding(textFitPadding: CompiledExpression<DpPaddingValue>) {
-    TODO()
+    setProperty("icon-text-fit-padding", textFitPadding)
   }
 
   actual fun setIconImage(image: CompiledExpression<ImageValue>) {
-    TODO()
+    setProperty("icon-image", image)
   }
 
   actual fun setIconRotate(rotate: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("icon-rotate", rotate)
   }
 
   actual fun setIconPadding(padding: CompiledExpression<DpPaddingValue>) {
-    TODO()
+    setProperty("icon-padding", padding)
   }
 
   actual fun setIconKeepUpright(keepUpright: CompiledExpression<BooleanValue>) {
-    TODO()
+    setProperty("icon-keep-upright", keepUpright)
   }
 
   actual fun setIconOffset(offset: CompiledExpression<DpOffsetValue>) {
-    TODO()
+    setProperty("icon-offset", offset)
   }
 
   actual fun setIconAnchor(anchor: CompiledExpression<SymbolAnchor>) {
-    TODO()
+    setProperty("icon-anchor", anchor)
   }
 
   actual fun setIconPitchAlignment(pitchAlignment: CompiledExpression<IconPitchAlignment>) {
-    TODO()
+    setProperty("icon-pitch-alignment", pitchAlignment)
   }
 
   actual fun setIconOpacity(opacity: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("icon-opacity", opacity)
   }
 
   actual fun setIconColor(color: CompiledExpression<ColorValue>) {
-    TODO()
+    setProperty("icon-color", color)
   }
 
   actual fun setIconHaloColor(haloColor: CompiledExpression<ColorValue>) {
-    TODO()
+    setProperty("icon-halo-color", haloColor)
   }
 
   actual fun setIconHaloWidth(haloWidth: CompiledExpression<DpValue>) {
-    TODO()
+    setProperty("icon-halo-width", haloWidth)
   }
 
   actual fun setIconHaloBlur(haloBlur: CompiledExpression<DpValue>) {
-    TODO()
+    setProperty("icon-halo-blur", haloBlur)
   }
 
   actual fun setIconTranslate(translate: CompiledExpression<DpOffsetValue>) {
-    TODO()
+    setProperty("icon-translate", translate)
   }
 
   actual fun setIconTranslateAnchor(translateAnchor: CompiledExpression<TranslateAnchor>) {
-    TODO()
+    setProperty("icon-translate-anchor", translateAnchor)
   }
 
   actual fun setTextPitchAlignment(pitchAlignment: CompiledExpression<TextPitchAlignment>) {
-    TODO()
+    setProperty("text-pitch-alignment", pitchAlignment)
   }
 
   actual fun setTextRotationAlignment(
     rotationAlignment: CompiledExpression<TextRotationAlignment>
   ) {
-    TODO()
+    setProperty("text-rotation-alignment", rotationAlignment)
   }
 
   actual fun setTextField(field: CompiledExpression<FormattedValue>) {
-    TODO()
+    setProperty("text-field", field)
   }
 
   actual fun setTextFont(font: CompiledExpression<ListValue<StringValue>>) {
-    TODO()
+    setProperty("text-font", font)
   }
 
   actual fun setTextSize(size: CompiledExpression<DpValue>) {
-    TODO()
+    setProperty("text-size", size)
   }
 
   actual fun setTextMaxWidth(maxWidth: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("text-max-width", maxWidth)
   }
 
   actual fun setTextLineHeight(lineHeight: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("text-line-height", lineHeight)
   }
 
   actual fun setTextLetterSpacing(letterSpacing: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("text-letter-spacing", letterSpacing)
   }
 
   actual fun setTextJustify(justify: CompiledExpression<TextJustify>) {
-    TODO()
+    setProperty("text-justify", justify)
   }
 
   actual fun setTextRadialOffset(radialOffset: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("text-radial-offset", radialOffset)
   }
 
   actual fun setTextVariableAnchor(variableAnchor: CompiledExpression<ListValue<SymbolAnchor>>) {
-    TODO()
+    setProperty("text-variable-anchor", variableAnchor)
   }
 
   actual fun setTextVariableAnchorOffset(
     variableAnchorOffset: CompiledExpression<TextVariableAnchorOffsetValue>
   ) {
-    TODO()
+    setProperty("text-variable-anchor-offset", variableAnchorOffset)
   }
 
   actual fun setTextAnchor(anchor: CompiledExpression<SymbolAnchor>) {
-    TODO()
+    setProperty("text-anchor", anchor)
   }
 
   actual fun setTextMaxAngle(maxAngle: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("text-max-angle", maxAngle)
   }
 
   actual fun setTextWritingMode(writingMode: CompiledExpression<ListValue<TextWritingMode>>) {
-    TODO()
+    setProperty("text-writing-mode", writingMode)
   }
 
   actual fun setTextRotate(rotate: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("text-rotate", rotate)
   }
 
   actual fun setTextPadding(padding: CompiledExpression<DpValue>) {
-    TODO()
+    setProperty("text-padding", padding)
   }
 
   actual fun setTextKeepUpright(keepUpright: CompiledExpression<BooleanValue>) {
-    TODO()
+    setProperty("text-keep-upright", keepUpright)
   }
 
   actual fun setTextTransform(transform: CompiledExpression<TextTransform>) {
-    TODO()
+    setProperty("text-transform", transform)
   }
 
   actual fun setTextOffset(offset: CompiledExpression<FloatOffsetValue>) {
-    TODO()
+    setProperty("text-offset", offset)
   }
 
   actual fun setTextAllowOverlap(allowOverlap: CompiledExpression<BooleanValue>) {
-    TODO()
+    setProperty("text-allow-overlap", allowOverlap)
   }
 
   actual fun setTextOverlap(overlap: CompiledExpression<SymbolOverlap>) {
-    TODO()
+    setProperty("text-overlap", overlap)
   }
 
   actual fun setTextIgnorePlacement(ignorePlacement: CompiledExpression<BooleanValue>) {
-    TODO()
+    setProperty("text-ignore-placement", ignorePlacement)
   }
 
   actual fun setTextOptional(optional: CompiledExpression<BooleanValue>) {
-    TODO()
+    setProperty("text-optional", optional)
   }
 
   actual fun setTextOpacity(opacity: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("text-opacity", opacity)
   }
 
   actual fun setTextColor(color: CompiledExpression<ColorValue>) {
-    TODO()
+    setProperty("text-color", color)
   }
 
   actual fun setTextHaloColor(haloColor: CompiledExpression<ColorValue>) {
-    TODO()
+    setProperty("text-halo-color", haloColor)
   }
 
   actual fun setTextHaloWidth(haloWidth: CompiledExpression<DpValue>) {
-    TODO()
+    setProperty("text-halo-width", haloWidth)
   }
 
   actual fun setTextHaloBlur(haloBlur: CompiledExpression<DpValue>) {
-    TODO()
+    setProperty("text-halo-blur", haloBlur)
   }
 
   actual fun setTextTranslate(translate: CompiledExpression<DpOffsetValue>) {
-    TODO()
+    setProperty("text-translate", translate)
   }
 
   actual fun setTextTranslateAnchor(translateAnchor: CompiledExpression<TranslateAnchor>) {
-    TODO()
+    setProperty("text-translate-anchor", translateAnchor)
   }
 }

@@ -39,6 +39,9 @@ public class MapLibreMap(
 
   public fun dispose(): Unit = nativePeer.clean()
 
+  public val isDisposed: Boolean
+    get() = nativePeer.rawPtr == 0L
+
   // region Rendering
 
   // TODO: renderStill(callback)
@@ -58,6 +61,10 @@ public class MapLibreMap(
   public external fun addLayer(layer: org.maplibre.kmp.native.layers.Layer)
 
   public external fun removeLayer(layer: org.maplibre.kmp.native.layers.Layer)
+
+  public external fun setLayerProperty(layerId: String, name: String, jsonValue: String?)
+
+  public external fun setLayerFilter(layerId: String, jsonValue: String?)
 
   public external fun loadStyleURL(url: String)
 

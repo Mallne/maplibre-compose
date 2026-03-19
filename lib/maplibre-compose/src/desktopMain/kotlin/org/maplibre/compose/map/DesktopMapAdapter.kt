@@ -45,12 +45,16 @@ import org.maplibre.spatialk.geojson.Position
 internal class DesktopMapAdapter(internal var callbacks: MapAdapter.Callbacks) :
   MapAdapter, MapObserver, MapControls.Observer {
 
-  internal lateinit var map: MapLibreMap
-  internal lateinit var mapControls: MapControls
+  internal var map: MapLibreMap? = null
+  internal var mapControls: MapControls? = null
 
   private var lastBaseStyle: BaseStyle? = null
 
   override fun onDidFinishLoadingMap() {
+    val mapRef = map
+    if (mapRef != null && !mapRef.isDisposed) {
+      mapRef.triggerRepaint()
+    }
     callbacks.onMapFinishedLoading(this)
   }
 
@@ -60,9 +64,10 @@ internal class DesktopMapAdapter(internal var callbacks: MapAdapter.Callbacks) :
 
   override fun onCameraWillChange(mode: CameraChangeMode) {
     // camera moves once on map initialization, before we have a map reference
-    if (!::map.isInitialized) return
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
     val reason =
-      if (map.isGestureInProgress) CameraMoveReason.GESTURE else CameraMoveReason.PROGRAMMATIC
+      if (mapRef.isGestureInProgress) CameraMoveReason.GESTURE else CameraMoveReason.PROGRAMMATIC
     callbacks.onCameraMoveStarted(this, reason)
   }
 
@@ -72,7 +77,8 @@ internal class DesktopMapAdapter(internal var callbacks: MapAdapter.Callbacks) :
   }
 
   override fun onCameraDidChange(mode: CameraChangeMode) {
-    if (!::map.isInitialized) return
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
     callbacks.onCameraMoved(this)
     callbacks.onCameraMoveEnded(this)
   }
@@ -88,28 +94,34 @@ internal class DesktopMapAdapter(internal var callbacks: MapAdapter.Callbacks) :
   }
 
   override fun setBaseStyle(style: BaseStyle) {
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
     if (style == lastBaseStyle) return
     lastBaseStyle = style
 
     when (style) {
       is BaseStyle.Uri ->
         if (style.uri.startsWith("jar:file:")) {
-          map.loadStyleJSON(URI(style.uri).toURL().readText())
+          mapRef.loadStyleJSON(URI(style.uri).toURL().readText())
         } else {
-          map.loadStyleURL(style.uri)
+          mapRef.loadStyleURL(style.uri)
         }
-      is BaseStyle.Json -> map.loadStyleJSON(style.json)
+      is BaseStyle.Json -> mapRef.loadStyleJSON(style.json)
     }
 
-    callbacks.onStyleChanged(this, DesktopStyle(map))
+    callbacks.onStyleChanged(this, DesktopStyle(mapRef))
   }
 
   override fun getCameraPosition(): CameraPosition {
-    return map.getCameraOptions().toCameraPosition()
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return CameraPosition()
+    return mapRef.getCameraOptions().toCameraPosition()
   }
 
   override fun setCameraPosition(cameraPosition: CameraPosition) {
-    map.jumpTo(
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
+    mapRef.jumpTo(
       CameraOptions.centered(
         center = LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude),
         zoom = cameraPosition.zoom,
@@ -125,39 +137,53 @@ internal class DesktopMapAdapter(internal var callbacks: MapAdapter.Callbacks) :
     tilt: Double,
     padding: PaddingValues,
   ) {
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
     val cameraOptions =
-      map.cameraForLatLngBounds(
+      mapRef.cameraForLatLngBounds(
         bounds = boundingBox.toMlnLatLngBounds(),
         padding = padding.toMlnEdgeInsets(LayoutDirection.Ltr),
         bearing = bearing,
         pitch = tilt,
       )
 
-    map.jumpTo(cameraOptions)
+    mapRef.jumpTo(cameraOptions)
   }
 
   override fun setCameraBoundingBox(boundingBox: BoundingBox?) {
-    map.bounds = map.bounds.copy(bounds = boundingBox?.toMlnLatLngBounds())
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
+    mapRef.bounds = mapRef.bounds.copy(bounds = boundingBox?.toMlnLatLngBounds())
   }
 
   override fun setMaxZoom(maxZoom: Double) {
-    map.bounds = map.bounds.copy(maxZoom = maxZoom)
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
+    mapRef.bounds = mapRef.bounds.copy(maxZoom = maxZoom)
   }
 
   override fun setMinZoom(minZoom: Double) {
-    map.bounds = map.bounds.copy(minZoom = minZoom)
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
+    mapRef.bounds = mapRef.bounds.copy(minZoom = minZoom)
   }
 
   override fun setMinPitch(minPitch: Double) {
-    map.bounds = map.bounds.copy(minPitch = minPitch)
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
+    mapRef.bounds = mapRef.bounds.copy(minPitch = minPitch)
   }
 
   override fun setMaxPitch(maxPitch: Double) {
-    map.bounds = map.bounds.copy(maxPitch = maxPitch)
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
+    mapRef.bounds = mapRef.bounds.copy(maxPitch = maxPitch)
   }
 
   override fun getVisibleBoundingBox(): BoundingBox {
-    return map.latLngBoundsForCamera(map.getCameraOptions()).toBoundingBox()
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return BoundingBox(0.0, 0.0, 0.0, 0.0)
+    return mapRef.latLngBoundsForCamera(mapRef.getCameraOptions()).toBoundingBox()
   }
 
   override fun getVisibleRegion(): VisibleRegion {
@@ -171,7 +197,9 @@ internal class DesktopMapAdapter(internal var callbacks: MapAdapter.Callbacks) :
   }
 
   override fun setRenderSettings(value: RenderOptions) {
-    map.debugOptions = value.debugOptions
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
+    mapRef.debugOptions = value.debugOptions
     // TODO: FPS limit
   }
 
@@ -180,15 +208,19 @@ internal class DesktopMapAdapter(internal var callbacks: MapAdapter.Callbacks) :
   }
 
   override fun setGestureSettings(value: GestureOptions) {
-    mapControls.config = value.toMapControlsConfig()
+    mapControls?.config = value.toMapControlsConfig()
   }
 
   override fun positionFromScreenLocation(offset: DpOffset): Position {
-    return map.latLngForPixel(offset.toScreenCoordinate()).toPosition()
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return Position(0.0, 0.0)
+    return mapRef.latLngForPixel(offset.toScreenCoordinate()).toPosition()
   }
 
   override fun screenLocationFromPosition(position: Position): DpOffset {
-    return map.pixelForLatLng(position.toMlnLatLng()).toDpOffset()
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return DpOffset.Zero
+    return mapRef.pixelForLatLng(position.toMlnLatLng()).toDpOffset()
   }
 
   override fun queryRenderedFeatures(
@@ -215,14 +247,18 @@ internal class DesktopMapAdapter(internal var callbacks: MapAdapter.Callbacks) :
   }
 
   override suspend fun animateCameraPosition(finalPosition: CameraPosition, duration: Duration) {
-    map.flyTo(
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
+    mapRef.flyTo(
       finalPosition.toMlnCameraOptions(LayoutDirection.Ltr),
       duration.inWholeMilliseconds.toInt(),
     )
     try {
       delay(duration)
     } catch (e: CancellationException) {
-      map.cancelTransitions()
+      if (!mapRef.isDisposed) {
+        mapRef.cancelTransitions()
+      }
       throw e
     }
   }
@@ -234,35 +270,53 @@ internal class DesktopMapAdapter(internal var callbacks: MapAdapter.Callbacks) :
     padding: PaddingValues,
     duration: Duration,
   ) {
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
     val cameraOptions =
-      map.cameraForLatLngBounds(
+      mapRef.cameraForLatLngBounds(
         bounds = boundingBox.toMlnLatLngBounds(),
         padding = padding.toMlnEdgeInsets(LayoutDirection.Ltr),
         bearing = bearing,
         pitch = tilt,
       )
 
-    map.flyTo(cameraOptions, duration.inWholeMilliseconds.toInt())
+    mapRef.flyTo(cameraOptions, duration.inWholeMilliseconds.toInt())
 
     try {
       delay(duration)
     } catch (e: CancellationException) {
-      map.cancelTransitions()
+      if (!mapRef.isDisposed) {
+        mapRef.cancelTransitions()
+      }
       throw e
     }
   }
 
   override fun onMapPrimaryClick(coordinate: ScreenCoordinate) {
-    val latLng = map.latLngForPixel(coordinate)
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
+    val latLng = mapRef.latLngForPixel(coordinate)
     val position = latLng.toPosition()
     val dpOffset = coordinate.toDpOffset()
     callbacks.onClick(this, position, dpOffset)
   }
 
   override fun onMapSecondaryClick(coordinate: ScreenCoordinate) {
-    val latLng = map.latLngForPixel(coordinate)
+    val mapRef = map
+    if (mapRef == null || mapRef.isDisposed) return
+    val latLng = mapRef.latLngForPixel(coordinate)
     val position = latLng.toPosition()
     val dpOffset = coordinate.toDpOffset()
     callbacks.onLongClick(this, position, dpOffset)
+  }
+
+  public fun clear() {
+    mapControls?.disable()
+    mapControls = null
+    map = null
+  }
+
+  public fun dispose() {
+    clear()
   }
 }

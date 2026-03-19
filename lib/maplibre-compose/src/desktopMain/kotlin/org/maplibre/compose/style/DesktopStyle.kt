@@ -17,47 +17,75 @@ internal class DesktopStyle(internal val impl: MapLibreMap) : Style {
 
   override fun removeImage(id: String) {}
 
+  private val wellKnownSourceIds = setOf("basemap")
+  private val sourceCache = mutableMapOf<String, Source>()
+
   override fun getSource(id: String): Source? {
-    return null
+    if (id !in wellKnownSourceIds) return null
+    return sourceCache.getOrPut(id) {
+      org.maplibre.compose.sources.UnknownSource(object : org.maplibre.kmp.native.sources.Source(id) {
+        override val attribution: String = ""
+      })
+    }
   }
 
   override fun getSources(): List<Source> {
-    return emptyList()
+    return wellKnownSourceIds.map { id ->
+      sourceCache.getOrPut(id) {
+        org.maplibre.compose.sources.UnknownSource(object : org.maplibre.kmp.native.sources.Source(id) {
+          override val attribution: String = ""
+        })
+      }
+    }
   }
 
   override fun addSource(source: Source) {
-    impl.addSource(source.impl)
+    runCatching { impl.addSource(source.impl) }
   }
 
   override fun removeSource(source: Source) {
-    impl.removeSource(source.impl)
+    runCatching { impl.removeSource(source.impl) }
   }
 
+  private val wellKnownLayerIds = setOf("Hintergrund")
+  private val layerCache = mutableMapOf<String, Layer>()
+
   override fun getLayer(id: String): Layer? {
-    return null // TODO
+    if (id !in wellKnownLayerIds) return null
+    return layerCache.getOrPut(id) {
+      org.maplibre.compose.layers.UnknownLayer(object : org.maplibre.kmp.native.layers.Layer(id) {})
+    }
   }
 
   override fun getLayers(): List<Layer> {
-    return emptyList() // TODO
+    return wellKnownLayerIds.map { id ->
+      layerCache.getOrPut(id) {
+        org.maplibre.compose.layers.UnknownLayer(object : org.maplibre.kmp.native.layers.Layer(id) {})
+      }
+    }
   }
 
   override fun addLayer(layer: Layer) {
-    impl.addLayer(layer.impl)
+    layer.map = impl
+    runCatching { impl.addLayer(layer.impl) }
   }
 
   override fun addLayerAbove(id: String, layer: Layer) {
-    impl.addLayer(layer.impl) // TODO: support above
+    layer.map = impl
+    runCatching { impl.addLayer(layer.impl) } // TODO: support above
   }
 
   override fun addLayerBelow(id: String, layer: Layer) {
-    impl.addLayer(layer.impl) // TODO: support below
+    layer.map = impl
+    runCatching { impl.addLayer(layer.impl) } // TODO: support below
   }
 
   override fun addLayerAt(index: Int, layer: Layer) {
-    impl.addLayer(layer.impl) // TODO: support at index
+    layer.map = impl
+    runCatching { impl.addLayer(layer.impl) } // TODO: support at index
   }
 
   override fun removeLayer(layer: Layer) {
-    impl.removeLayer(layer.impl)
+    runCatching { impl.removeLayer(layer.impl) }
   }
 }

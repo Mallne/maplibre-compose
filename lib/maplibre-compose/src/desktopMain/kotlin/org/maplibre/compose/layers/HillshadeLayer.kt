@@ -8,29 +8,29 @@ import org.maplibre.compose.sources.Source
 
 internal actual class HillshadeLayer actual constructor(id: String, actual val source: Source) :
   Layer() {
-  override val impl = TODO()
+  override val impl = org.maplibre.kmp.native.layers.HillshadeLayer(id, source.id)
 
   actual fun setHillshadeIlluminationDirection(direction: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("hillshade-illumination-direction", direction)
   }
 
   actual fun setHillshadeIlluminationAnchor(anchor: CompiledExpression<IlluminationAnchor>) {
-    TODO()
+    setProperty("hillshade-illumination-anchor", anchor)
   }
 
   actual fun setHillshadeExaggeration(exaggeration: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("hillshade-exaggeration", exaggeration)
   }
 
   actual fun setHillshadeShadowColor(shadowColor: CompiledExpression<ColorValue>) {
-    TODO()
+    setProperty("hillshade-shadow-color", shadowColor)
   }
 
   actual fun setHillshadeHighlightColor(highlightColor: CompiledExpression<ColorValue>) {
-    TODO()
+    setProperty("hillshade-highlight-color", highlightColor)
   }
 
   actual fun setHillshadeAccentColor(accentColor: CompiledExpression<ColorValue>) {
-    TODO()
+    setProperty("hillshade-accent-color", accentColor)
   }
 }

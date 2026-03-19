@@ -7,17 +7,17 @@ import org.maplibre.compose.expressions.value.ImageValue
 
 internal actual class BackgroundLayer actual constructor(id: String) : Layer() {
 
-  override val impl: Nothing = TODO()
+  override val impl = org.maplibre.kmp.native.layers.BackgroundLayer(id)
 
   actual fun setBackgroundColor(color: CompiledExpression<ColorValue>) {
-    TODO()
+    setProperty("background-color", color)
   }
 
   actual fun setBackgroundPattern(pattern: CompiledExpression<ImageValue>) {
-    TODO()
+    setProperty("background-pattern", pattern)
   }
 
   actual fun setBackgroundOpacity(opacity: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("background-opacity", opacity)
   }
 }

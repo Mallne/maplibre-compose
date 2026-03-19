@@ -1,53 +1,52 @@
 package org.maplibre.compose.layers
 
 import org.maplibre.compose.expressions.ast.CompiledExpression
-import org.maplibre.compose.expressions.value.BooleanValue
-import org.maplibre.compose.expressions.value.ColorValue
-import org.maplibre.compose.expressions.value.DpOffsetValue
-import org.maplibre.compose.expressions.value.FloatValue
-import org.maplibre.compose.expressions.value.ImageValue
-import org.maplibre.compose.expressions.value.TranslateAnchor
+import org.maplibre.compose.expressions.value.*
 import org.maplibre.compose.sources.Source
 
 internal actual class FillExtrusionLayer actual constructor(id: String, source: Source) :
   FeatureLayer(source) {
-  override val impl = TODO()
+  override val impl = org.maplibre.kmp.native.layers.FillExtrusionLayer(id, source.id)
 
-  actual override var sourceLayer: String = TODO()
+  actual override var sourceLayer: String = ""
+    set(value) {
+      field = value
+      setProperty("source-layer", org.maplibre.compose.expressions.ast.StringLiteral.of(value))
+    }
 
   actual override fun setFilter(filter: CompiledExpression<BooleanValue>) {
-    TODO()
+    setFilterInternal(filter)
   }
 
   actual fun setFillExtrusionOpacity(opacity: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("fill-extrusion-opacity", opacity)
   }
 
   actual fun setFillExtrusionColor(color: CompiledExpression<ColorValue>) {
-    TODO()
+    setProperty("fill-extrusion-color", color)
   }
 
   actual fun setFillExtrusionTranslate(translate: CompiledExpression<DpOffsetValue>) {
-    TODO()
+    setProperty("fill-extrusion-translate", translate)
   }
 
   actual fun setFillExtrusionTranslateAnchor(anchor: CompiledExpression<TranslateAnchor>) {
-    TODO()
+    setProperty("fill-extrusion-translate-anchor", anchor)
   }
 
   actual fun setFillExtrusionPattern(pattern: CompiledExpression<ImageValue>) {
-    TODO()
+    setProperty("fill-extrusion-pattern", pattern)
   }
 
   actual fun setFillExtrusionHeight(height: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("fill-extrusion-height", height)
   }
 
   actual fun setFillExtrusionBase(base: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("fill-extrusion-base", base)
   }
 
   actual fun setFillExtrusionVerticalGradient(verticalGradient: CompiledExpression<BooleanValue>) {
-    TODO()
+    setProperty("fill-extrusion-vertical-gradient", verticalGradient)
   }
 }

@@ -1,54 +1,53 @@
 package org.maplibre.compose.layers
 
 import org.maplibre.compose.expressions.ast.CompiledExpression
-import org.maplibre.compose.expressions.value.BooleanValue
-import org.maplibre.compose.expressions.value.ColorValue
-import org.maplibre.compose.expressions.value.DpOffsetValue
-import org.maplibre.compose.expressions.value.FloatValue
-import org.maplibre.compose.expressions.value.ImageValue
-import org.maplibre.compose.expressions.value.TranslateAnchor
+import org.maplibre.compose.expressions.value.*
 import org.maplibre.compose.sources.Source
 
 internal actual class FillLayer actual constructor(id: String, source: Source) :
   FeatureLayer(source) {
 
-  override val impl = TODO()
+  override val impl = org.maplibre.kmp.native.layers.FillLayer(id, source.id)
 
-  actual override var sourceLayer: String = TODO()
+  actual override var sourceLayer: String = ""
+    set(value) {
+      field = value
+      setProperty("source-layer", org.maplibre.compose.expressions.ast.StringLiteral.of(value))
+    }
 
   actual override fun setFilter(filter: CompiledExpression<BooleanValue>) {
-    TODO()
+    setFilterInternal(filter)
   }
 
   actual fun setFillSortKey(sortKey: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("fill-sort-key", sortKey)
   }
 
   actual fun setFillAntialias(antialias: CompiledExpression<BooleanValue>) {
-    TODO()
+    setProperty("fill-antialias", antialias)
   }
 
   actual fun setFillOpacity(opacity: CompiledExpression<FloatValue>) {
-    TODO()
+    setProperty("fill-opacity", opacity)
   }
 
   actual fun setFillColor(color: CompiledExpression<ColorValue>) {
-    TODO()
+    setProperty("fill-color", color)
   }
 
   actual fun setFillOutlineColor(outlineColor: CompiledExpression<ColorValue>) {
-    TODO()
+    setProperty("fill-outline-color", outlineColor)
   }
 
   actual fun setFillTranslate(translate: CompiledExpression<DpOffsetValue>) {
-    TODO()
+    setProperty("fill-translate", translate)
   }
 
   actual fun setFillTranslateAnchor(translateAnchor: CompiledExpression<TranslateAnchor>) {
-    TODO()
+    setProperty("fill-translate-anchor", translateAnchor)
   }
 
   actual fun setFillPattern(pattern: CompiledExpression<ImageValue>) {
-    TODO()
+    setProperty("fill-pattern", pattern)
   }
 }

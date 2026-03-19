@@ -1,3 +1,5 @@
 package org.maplibre.compose.layers
 
-internal actual class UnknownLayer(override val impl: Nothing) : Layer()
+import org.maplibre.kmp.native.layers.Layer as NativeLayer
+
+internal actual class UnknownLayer(override val impl: NativeLayer) : Layer()

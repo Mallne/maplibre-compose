@@ -8,6 +8,7 @@ plugins {
 
 ext {
   set("base_tag", "v0.12.1")
+  set("next_patch_version", "v0.12.2")
 }
 
 mkdocs {

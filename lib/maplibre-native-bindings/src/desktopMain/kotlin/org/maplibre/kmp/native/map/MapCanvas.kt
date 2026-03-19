@@ -70,13 +70,6 @@ public class MapCanvas(
     map = null
     renderer?.dispose()
     renderer = null
-
-    // HACK: Force a repaint by resizing the window slightly to avoid a ghost map on macoOS.
-    val root = SwingUtilities.getWindowAncestor(this)
-    val oWidth = root.width
-    val oHeight = root.height
-    root.size = Dimension(oWidth + 1, oHeight + 1)
-    root.size = Dimension(oWidth, oHeight)
   }
 
   /**
@@ -95,9 +88,14 @@ public class MapCanvas(
     override fun componentResized(e: ComponentEvent) {
       val canvas = e.component as? MapCanvas ?: return
       val pixelRatio = canvas.graphicsConfiguration.defaultTransform.scaleX.toFloat()
-      val size = Size(width = canvas.width, height = canvas.height)
+      val width = canvas.width
+      val height = canvas.height
+      if (width <= 0 || height <= 0) return
+
+      val size = Size(width = width, height = height)
       canvas.renderer?.setSize(size * pixelRatio)
       canvas.map?.setSize(size)
+      canvas.map?.triggerRepaint()
     }
 
     override fun ancestorMoved(e: HierarchyEvent) {}

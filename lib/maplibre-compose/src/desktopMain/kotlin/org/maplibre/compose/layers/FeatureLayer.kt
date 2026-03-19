@@ -8,4 +8,8 @@ internal actual sealed class FeatureLayer actual constructor(actual val source: 
   actual abstract var sourceLayer: String
 
   actual abstract fun setFilter(filter: CompiledExpression<BooleanValue>)
+
+  protected fun setFilterInternal(filter: CompiledExpression<BooleanValue>) {
+    super.setLayerFilter(filter)
+  }
 }

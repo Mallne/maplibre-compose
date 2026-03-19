@@ -7,7 +7,16 @@
 #include <mbgl/style/sources/raster_source.hpp>
 #include <mbgl/style/sources/geojson_source.hpp>
 #include <mbgl/style/layers/raster_layer.hpp>
-#include <mbgl/style/layers/circle_layer.hpp>
+#include <mbgl/style/layers/background_layer.hpp>
+#include <mbgl/style/layers/fill_layer.hpp>
+#include <mbgl/style/layers/line_layer.hpp>
+#include <mbgl/style/layers/symbol_layer.hpp>
+#include <mbgl/style/layers/fill_extrusion_layer.hpp>
+#include <BackgroundLayer_class.h>
+#include <FillLayer_class.h>
+#include <LineLayer_class.h>
+#include <SymbolLayer_class.h>
+#include <FillExtrusionLayer_class.h>
 #include <mbgl/util/client_options.hpp>
 
 #include <jni.h>
@@ -118,6 +127,11 @@ void JNICALL MapLibreMap_class::removeSource(JNIEnv* env, jMapLibreMap map, jSou
   });
 }
 
+#include <mbgl/style/layers/fill_extrusion_layer.hpp>
+#include <mbgl/style/layers/line_layer.hpp>
+#include <mbgl/style/layers/heatmap_layer.hpp>
+#include <mbgl/style/layers/hillshade_layer.hpp>
+
 void JNICALL MapLibreMap_class::addLayer(JNIEnv* env, jMapLibreMap map, jLayer layer) {
   withMapWrapper(env, map, [env, layer](auto wrapper) {
     auto id = smjni::java_string_to_cpp(env, java_classes::get<Layer_class>().getId(env, layer));
@@ -128,14 +142,82 @@ void JNICALL MapLibreMap_class::addLayer(JNIEnv* env, jMapLibreMap map, jLayer l
     } else if (env->IsInstanceOf(layer, java_classes::get<CircleLayer_class>())) {
       auto sourceId = smjni::java_string_to_cpp(env, java_classes::get<CircleLayer_class>().getSourceId(env, layer));
       wrapper->map->getStyle().addLayer(std::make_unique<mbgl::style::CircleLayer>(id, sourceId));
+    } else if (env->IsInstanceOf(layer, java_classes::get<BackgroundLayer_class>())) {
+      wrapper->map->getStyle().addLayer(std::make_unique<mbgl::style::BackgroundLayer>(id));
+    } else if (env->IsInstanceOf(layer, java_classes::get<FillLayer_class>())) {
+      auto sourceId = smjni::java_string_to_cpp(env, java_classes::get<FillLayer_class>().getSourceId(env, layer));
+      wrapper->map->getStyle().addLayer(std::make_unique<mbgl::style::FillLayer>(id, sourceId));
+    } else if (env->IsInstanceOf(layer, java_classes::get<LineLayer_class>())) {
+      auto sourceId = smjni::java_string_to_cpp(env, java_classes::get<LineLayer_class>().getSourceId(env, layer));
+      wrapper->map->getStyle().addLayer(std::make_unique<mbgl::style::LineLayer>(id, sourceId));
+    } else if (env->IsInstanceOf(layer, java_classes::get<SymbolLayer_class>())) {
+      auto sourceId = smjni::java_string_to_cpp(env, java_classes::get<SymbolLayer_class>().getSourceId(env, layer));
+      wrapper->map->getStyle().addLayer(std::make_unique<mbgl::style::SymbolLayer>(id, sourceId));
+    } else if (env->IsInstanceOf(layer, java_classes::get<FillExtrusionLayer_class>())) {
+      auto sourceId = smjni::java_string_to_cpp(env, java_classes::get<FillExtrusionLayer_class>().getSourceId(env, layer));
+      wrapper->map->getStyle().addLayer(std::make_unique<mbgl::style::FillExtrusionLayer>(id, sourceId));
+    } else if (env->IsInstanceOf(layer, java_classes::get<HeatmapLayer_class>())) {
+      auto sourceId = smjni::java_string_to_cpp(env, java_classes::get<HeatmapLayer_class>().getSourceId(env, layer));
+      wrapper->map->getStyle().addLayer(std::make_unique<mbgl::style::HeatmapLayer>(id, sourceId));
+    } else if (env->IsInstanceOf(layer, java_classes::get<HillshadeLayer_class>())) {
+      auto sourceId = smjni::java_string_to_cpp(env, java_classes::get<HillshadeLayer_class>().getSourceId(env, layer));
+      wrapper->map->getStyle().addLayer(std::make_unique<mbgl::style::HillshadeLayer>(id, sourceId));
     }
   });
 }
+
+#include <mbgl/style/conversion/json.hpp>
+#include <mbgl/style/conversion/filter.hpp>
+#include <mbgl/style/conversion/constant.hpp>
+#include <mbgl/style/conversion_impl.hpp>
 
 void JNICALL MapLibreMap_class::removeLayer(JNIEnv* env, jMapLibreMap map, jLayer layer) {
   withMapWrapper(env, map, [env, layer](auto wrapper) {
     auto id = smjni::java_string_to_cpp(env, java_classes::get<Layer_class>().getId(env, layer));
     wrapper->map->getStyle().removeLayer(id);
+  });
+}
+
+void JNICALL MapLibreMap_class::setLayerProperty(JNIEnv* env, jMapLibreMap map, jstring layerId, jstring name, jstring jsonValue) {
+  withMapWrapper(env, map, [env, layerId, name, jsonValue](auto wrapper) {
+    auto cppLayerId = smjni::java_string_to_cpp(env, layerId);
+    auto layer = wrapper->map->getStyle().getLayer(cppLayerId);
+    if (!layer) return;
+
+    auto cppName = smjni::java_string_to_cpp(env, name);
+    if (!jsonValue) {
+      layer->setProperty(cppName, mbgl::style::Undefined{});
+      return;
+    }
+
+    auto cppJsonValue = smjni::java_string_to_cpp(env, jsonValue);
+    auto value = mbgl::style::conversion::parseJSON(cppJsonValue);
+    if (!value) return;
+
+    layer->setProperty(cppName, *value);
+  });
+}
+
+void JNICALL MapLibreMap_class::setLayerFilter(JNIEnv* env, jMapLibreMap map, jstring layerId, jstring jsonValue) {
+  withMapWrapper(env, map, [env, layerId, jsonValue](auto wrapper) {
+    auto cppLayerId = smjni::java_string_to_cpp(env, layerId);
+    auto layer = wrapper->map->getStyle().getLayer(cppLayerId);
+    if (!layer) return;
+
+    if (!jsonValue) {
+      layer->setFilter(mbgl::style::Filter{});
+      return;
+    }
+
+    auto cppJsonValue = smjni::java_string_to_cpp(env, jsonValue);
+    auto value = mbgl::style::conversion::parseJSON(cppJsonValue);
+    if (!value) return;
+
+    mbgl::style::conversion::Error error;
+    auto filter = mbgl::style::conversion::convert<mbgl::style::Filter>(*value, error);
+    if (filter) {
+      layer->setFilter(*filter);
+    }
   });
 }
 

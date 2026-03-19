@@ -84,5 +84,10 @@ internal fun DesktopMapView(
     },
     modifier = modifier,
   )
-  DisposableEffect(Unit) { onDispose { currentOnReset() } }
+  DisposableEffect(Unit) {
+    onDispose {
+      currentMapAdapter?.dispose()
+      currentOnReset()
+    }
+  }
 }
